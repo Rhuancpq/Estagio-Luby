@@ -87,7 +87,7 @@ time_t CalcularDiferencaData(string a, string b){
     t2.tm_mday = stoi(string(b.begin(), b.begin()+2));
     sec1 = mktime(&t1);
     sec2 = mktime(&t2);
-    return difftime(max(sec1, sec2), min(sec1,sec2));
+    return difftime(max(sec1, sec2), min(sec1,sec2))/(3600*24);
 }
 
 
