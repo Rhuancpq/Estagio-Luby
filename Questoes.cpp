@@ -76,19 +76,18 @@ string CalcularValorComDescontoFormatado(string val, string p){
     return res;
 }
 
-int CalcularDiferencaData(string a, string b){
-    int ano1, ano2, mes1, mes2, dia1, dia2, res = 0;
+time_t CalcularDiferencaData(string a, string b){
     tm t1, t2;
-    ano1 = stoi(string(a.begin()+4, a.end()));
-    ano2 = stoi(string(b.begin()+4, b.end()));
-    mes1 = stoi(string(a.begin()+2, a.begin()+4));
-    mes2 = stoi(string(b.begin()+2, b.begin()+4));
-    dia1 = stoi(string(a.begin(), a.begin()+2));
-    dia2 = stoi(string(b.begin(), b.begin()+2));
-    res = max(dia1, dia2) - min(dia1, dia2);
-    res += (max(mes1, mes2) - min(mes1, mes2))*30;
-    res += (max(ano1, ano2) - min(ano1, ano2))*30;
-    return res;
+    time_t sec1, sec2;
+    t1.tm_year = stoi(string(a.begin()+4, a.end()))-1900;
+    t2.tm_year = stoi(string(b.begin()+4, b.end()))-1900;
+    t1.tm_mon = stoi(string(a.begin()+2, a.begin()+4))-1;
+    t2.tm_mon = stoi(string(b.begin()+2, b.begin()+4))-1;
+    t1.tm_mday = stoi(string(a.begin(), a.begin()+2));
+    t2.tm_mday = stoi(string(b.begin(), b.begin()+2));
+    sec1 = mktime(&t1);
+    sec2 = mktime(&t2);
+    return difftime(max(sec1, sec2), min(sec1,sec2));
 }
 
 
