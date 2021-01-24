@@ -3,6 +3,7 @@
 #include "Estoque.hpp"
 #include <iostream>
 #include <random>
+#include <locale>
 #include <iomanip>
 using namespace std;
 
@@ -22,65 +23,78 @@ void Maquina::visualizarEstoque(){
         return;
     }
     vector<Produto> produtos = this->estoque->getProdutos();
-    setlocale(LC_ALL, "pt_BR.UTF-8");
-    cout << setprecision(2);
+    setlocale(LC_ALL,"pt_BR.UTF-8");
+    locale::global(locale());
+    cout.imbue(locale());
     cout << endl;
-    for (int i = 0; i < 50; i++)
+    for (int i = 0; i < 10; i++)
         cout << '-';
-    cout << "Produtos disponíveis no estoque" << endl;
-    
+    cout << " Produtos disponíveis no estoque\n" << endl;
     for (auto x : produtos){
-        cout << " ID: " << x.getId()
+        cout << " ID: "; 
+        cout << setfill('0')
+        << setw(2) << x.getId(); 
+        cout << setprecision(3) 
+        << showpoint
         << " | Valor: R$ " << x.getValor()
-        << " | Quantidade: " << x.getQuantidade();
+        << " | Quantidade: " << x.getQuantidade() << endl;
     }
     
 }
 
 void Maquina::visualizarQuantidadeEstoque(){
-    cout << "Atualmente no estoque há " << this->estoque->getQuantidadeTotal()
-    << " produtos ao todo!!" << endl;
+    cout << "\nAtualmente no estoque há " << this->estoque->getQuantidadeTotal()
+    << " produtos ao todo!!\n" << endl;
 }
 
 void Maquina::visualizarHistorico(){
     if(historico_vendas.size() == 0){
-        cout << "Não foi efetuada nenhuma venda ainda" << endl;
+        cout << "\nNão foi efetuada nenhuma venda ainda\n" << endl;
     }else{
         cout << endl;
-        cout << setprecision(2);
         cout << "O valor total em vendas: R$ "
+        << setprecision(3)
         << valor_total << endl;
         for (auto x : historico_vendas){
-            cout << " ID: " << x.getId()
+            cout << " ID: "; 
+            cout << setfill('0')
+            << setw(2) << x.getId();
+            cout << setprecision(3)
+            << showpoint
             << " | Valor: R$ " << x.getValor()
-            << " | Quantidade vendida: " << x.getQuantidade();
+            << " | Quantidade vendida: " << x.getQuantidade() << endl;
         }
         cout << endl;
     }
 }
 
-bool Maquina::realizarVenda(int id, int quantidade, int valor_pago){
-    if(estoque->getQuantidadeProduto(id) == 0){
-        return false;
+int Maquina::realizarVenda(int id, int quantidade, int valor_pago){
+    if(estoque->getQuantidadeProduto(id) < quantidade){
+        cout << "\nQuantidade não disponível\n" << endl;
+        return 0;
     }
     Produto *p = estoque->getProduto(id);
     if(p == nullptr){
-        return false;
+        return -1;
     }else{
         double v_somado = p->getValor()*quantidade;
         if(valor_pago < v_somado){
-            cout << "Compra não efetuada, dinheiro insuficiente" << endl;
-            return false;
+            cout << "\nCompra não efetuada, dinheiro insuficiente" << endl;
+            cout << "Faltam: R$ "
+            << setprecision(3)
+            << v_somado-valor_pago << '\n' << endl;
+            return 2;
         }else{ 
             if(valor_pago > v_somado){
-                cout << setprecision(2);
-                cout << "Troco recebido: R$"
+                cout << setprecision(3);
+                cout << "\nTroco recebido: R$ "
                 << valor_pago - v_somado << endl; 
             }
             p = estoque->removeProduto(id, quantidade);
             this->historico_vendas.push_back(*p);
             this->valor_total += p->getValor()*p->getQuantidade();
-            return true;
+            cout << "Compra efetuada com sucesso!" << endl;
+            return 1;
         }
     }
 }
@@ -95,4 +109,10 @@ void Maquina::inicializaEstoque(){
     for (int i = 1; i <= t; i++){
         v_p.push_back(new Produto(i, precos(generator), qtds(generator)));
     }
+    this->estoque->insereProdutos(v_p);
+}
+
+bool Maquina::verificaProduto(int id){
+    Produto *p = estoque->getProduto(id);
+    return p == nullptr ? false : true;
 }

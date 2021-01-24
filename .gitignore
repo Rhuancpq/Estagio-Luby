@@ -2,4 +2,5 @@ POO/bin/*
 POO/obj/*
 !POO/bin/.gitkeep
 !POO/obj/.gitkeep
+*/.vscode/*
 .vscode/*

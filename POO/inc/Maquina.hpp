@@ -16,7 +16,8 @@ public:
     void visualizarEstoque();
     void visualizarQuantidadeEstoque();
     void visualizarHistorico();
-    bool realizarVenda(int id, int quantidade, int valor_pago);
+    int realizarVenda(int id, int quantidade, int valor_pago);
+    bool verificaProduto(int id);
 };
 
 #endif
