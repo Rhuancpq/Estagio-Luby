@@ -16,6 +16,8 @@ Estoque::~Estoque(){
 vector<Produto> Estoque::getProdutos(){
     vector<Produto> res;
     for(auto x : this->produtos){
+        if(x.second == nullptr)
+            continue;
         res.push_back(*x.second);
     }
     return res;
@@ -62,6 +64,8 @@ bool Estoque::abasteceProduto(int id, int quantidade){
    retorna nulo se não tiver a quantidade disponível no estoque */
 Produto* Estoque::removeProduto(int id, int quantidade){
     Produto *p = produtos[id];
+    if(p == nullptr)
+        return nullptr;
     if(p->getQuantidade() - quantidade < 0)
         return nullptr;
     if(p->getQuantidade() - quantidade == 0){
